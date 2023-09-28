@@ -1,27 +1,17 @@
-import { _Cookie, CookieCtorOptions } from "./cookie/index"
-import { _Storage, StorageCtorOptions } from "./storage/index"
-import { _MiniProgramStorage, MiniProgramCtorOptions } from "./miniprogram/index"
+import { _YuumiStorage, _YuumiStorageOption } from "./core/storage"
 
-export interface WebStorageCtorOptions extends CookieCtorOptions {}
-export class WebStorage {
-  cookie: _Cookie
-  local: _Storage
-  session: _Storage
+export * from "./core/cookie"
 
-  constructor(options: WebStorageCtorOptions) {
-    this.cookie = new _Cookie(options)
-    this.local = new _Storage(Object.assign({type: "localStorage"}, options) as StorageCtorOptions)
-    this.session = new _Storage(Object.assign({type: "sessionStorage"}, options) as StorageCtorOptions)
+export class YuumiLocalStorage extends _YuumiStorage {
+  constructor(option?: _YuumiStorageOption) {
+    super(() => window.localStorage, option)
   }
 }
 
-export class MiniProgramStorage extends _MiniProgramStorage {
-  constructor(options: MiniProgramCtorOptions) {
-    super(options)
-
-    // @ts-ignore
-    if (wx) { this._global = wx }
-    // @ts-ignore
-    else if (my) { this._global = my }
+export class YuumiSessionStorage extends _YuumiStorage {
+  constructor(option?: _YuumiStorageOption) {
+    super(() => window.sessionStorage, option)
   }
 }
+
+export * from "./core/miniprogram"
