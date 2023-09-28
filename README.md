@@ -32,7 +32,11 @@ const instace = new YuumiLocalStorage{option}
 
 import { YuumiSessionStorage } from "yuumi-storage"
 const instace = new YuumiSessionStorage{option}
+```
 
+### 小程序
+
+```js
 import { YuumiMiniProgramStorage } from "yuumi-storage"
 const instace = new YuumiMiniProgramStorage{option}
 ```
