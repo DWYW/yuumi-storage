@@ -54,6 +54,8 @@ export class _YuumiStorage extends _YuumiBaseStorage {
     const _key = this.getCompleteKey(key)
     let res: any = this.storage.getItem(_key)
 
+    if (res === null) return null
+
     try {
       res = JSON.parse(res)
     } catch(_) {
