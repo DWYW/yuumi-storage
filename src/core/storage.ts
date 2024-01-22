@@ -116,7 +116,7 @@ export class _YuumiStorage extends _YuumiBaseStorage {
 
     Object.keys(this.storage).forEach((key) => {
       if (hasFilter && !filter(this.getShortKey(key))) return
-      this.storage.removeItemSync(key)
+      this.storage.removeItem(key)
     })
   }
 
