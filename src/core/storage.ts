@@ -48,9 +48,10 @@ export class _YuumiStorage extends _YuumiBaseStorage {
   /**
    * 检索指定的键所对应的值
    * @param {string} key - 要检索的数据的名称（键）
+   * @param {boolean} onlyOnce - 是否只能获取一次，如果是获取后则会自动删除原有记录
    * @return {any}
    */
-  getItemSync<T>(key: string): T|null {
+  getItemSync<T>(key: string, onlyOnce?: boolean): T|null {
     const _key = this.getCompleteKey(key)
     let res: any = this.storage.getItem(_key)
 
@@ -71,6 +72,10 @@ export class _YuumiStorage extends _YuumiBaseStorage {
       }
     }
 
+    if (onlyOnce) {
+      this.removeItemSync(key)
+    }
+
     try {
       return JSON.parse(res.detail)
     } catch(_) {
@@ -81,10 +86,11 @@ export class _YuumiStorage extends _YuumiBaseStorage {
   /**
    * 检索指定的键所对应的值
    * @param {string} key - 要检索的数据的名称（键）
+   * @param {boolean} onlyOnce - 是否只能获取一次，如果是获取后则会自动删除原有记录
    * @return {Promise<T|null>}
    */
-  getItem<T>(key: string): Promise<T|null> {
-    const res = this.getItemSync<T|null>(key)
+  getItem<T>(key: string, onlyOnce?: boolean): Promise<T|null> {
+    const res = this.getItemSync<T|null>(key, onlyOnce)
     return Promise.resolve(res)
   }
 
