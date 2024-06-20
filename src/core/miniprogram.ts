@@ -130,7 +130,13 @@ export class YuumiMiniProgramStorage extends _YuumiBaseStorage {
     const hasFilter = typeof filter === 'function'
     const { keys } = this.global.getStorageInfoSync()
     keys.forEach((key: string) => {
-      if (hasFilter && !filter(this.getShortKey(key))) return
+      if (hasFilter) {
+        const _shortKey = this.getShortKey(key)
+        if (!filter(_shortKey)) return
+      } else if (!key.startsWith(this.prefix)) {
+        return
+      }
+      
       this.global.removeStorageSync(key)
     })
   }

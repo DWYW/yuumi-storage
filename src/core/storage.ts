@@ -121,7 +121,12 @@ export class _YuumiStorage extends _YuumiBaseStorage {
     const hasFilter = typeof filter === 'function'
 
     Object.keys(this.storage).forEach((key) => {
-      if (hasFilter && !filter(this.getShortKey(key))) return
+      if (hasFilter) {
+        const _shortKey = this.getShortKey(key)
+        if (!filter(_shortKey)) return
+      } else if (!key.startsWith(this.prefix)) {
+        return
+      }
       this.storage.removeItem(key)
     })
   }

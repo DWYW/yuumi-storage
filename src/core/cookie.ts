@@ -128,7 +128,12 @@ export class YuumiCookieStorage extends _YuumiBaseStorage {
       if (!res) return
       const _key = res[1]
       const _value = res[2]
-      if (hasFilter && !filter(this.getShortKey(_key))) return
+      if (hasFilter) {
+        const _shortKey = this.getShortKey(_key)
+        if (!filter(_shortKey)) return
+      } else if (!_key.startsWith(this.prefix)) {
+        return
+      }
       document.cookie = this.cookieCreator(_key, _value, expires)
     })
   }
