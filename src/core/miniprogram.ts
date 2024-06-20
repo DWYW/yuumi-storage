@@ -67,23 +67,31 @@ export class YuumiMiniProgramStorage extends _YuumiBaseStorage {
   /**
    * 检索指定的键所对应的值
    * @param {string} key - 要检索的数据的名称（键）
+   * @param {boolean} onlyOnce - 是否只能获取一次，如果是获取后则会自动删除原有记录
    * @return {any}
    */
-  getItemSync<T>(key: string): T|null {
+  getItemSync<T>(key: string, onlyOnce?: boolean): T|null {
     const value = this.global.getStorageSync(this.getCompleteKey(key))
+    if (onlyOnce) {
+      this.removeItemSync(key)
+    }
     return this.parseValue<T|null>(value, key)
   }
 
   /**
    * 检索指定的键所对应的值
    * @param {string} key - 要检索的数据的名称（键）
+   * @param {boolean} onlyOnce - 是否只能获取一次，如果是获取后则会自动删除原有记录
    * @return {Promise<T|null>}
    */
-  getItem<T>(key: string): Promise<T|null> {
+  getItem<T>(key: string, onlyOnce?: boolean): Promise<T|null> {
     return new Promise((resolve, reject) => {
       this.global.getStorage({
         key: this.getCompleteKey(key),
         success: (res: any) => {
+          if (onlyOnce) {
+            this.removeItemSync(key)
+          }
           resolve(this.parseValue(res, key))
         },
         fail: reject
@@ -122,7 +130,13 @@ export class YuumiMiniProgramStorage extends _YuumiBaseStorage {
     const hasFilter = typeof filter === 'function'
     const { keys } = this.global.getStorageInfoSync()
     keys.forEach((key: string) => {
-      if (hasFilter && !filter(this.getShortKey(key))) return
+      if (hasFilter) {
+        const _shortKey = this.getShortKey(key)
+        if (!filter(_shortKey)) return
+      } else if (!key.startsWith(this.prefix)) {
+        return
+      }
+      
       this.global.removeStorageSync(key)
     })
   }

@@ -62,22 +62,27 @@ export class YuumiCookieStorage extends _YuumiBaseStorage {
   /**
    * 检索指定的键所对应的值
    * @param {string} key - 要检索的数据的名称（键）
+   * @param {boolean} onlyOnce - 是否只能获取一次，如果是获取后则会自动删除原有记录
    * @return {string|undefined}
    */
-  getItemSync(key: string): string|undefined {
+  getItemSync(key: string, onlyOnce?: boolean): string|undefined {
     const _key = this.getCompleteKey(key)
     const reg = new RegExp('(^| )' + _key + '=([^;]*)(;|$)')
     const matches = document.cookie.match(reg)
+    if (onlyOnce) {
+      this.removeItemSync(key)
+    }
     return matches ? decodeURIComponent(matches[2]) : undefined
   }
 
   /**
    * 检索指定的键所对应的值
    * @param {string} key - 要检索的数据的名称（键）
+   * @param {boolean} onlyOnce - 是否只能获取一次，如果是获取后则会自动删除原有记录
    * @return {Promise<string|undefined>}
    */
-  getItem(key: string): Promise<string|undefined> {
-    const res = this.getItemSync(key)
+  getItem(key: string, onlyOnce?: boolean): Promise<string|undefined> {
+    const res = this.getItemSync(key, onlyOnce)
     return Promise.resolve(res)
   }
 
@@ -123,7 +128,12 @@ export class YuumiCookieStorage extends _YuumiBaseStorage {
       if (!res) return
       const _key = res[1]
       const _value = res[2]
-      if (hasFilter && !filter(this.getShortKey(_key))) return
+      if (hasFilter) {
+        const _shortKey = this.getShortKey(_key)
+        if (!filter(_shortKey)) return
+      } else if (!_key.startsWith(this.prefix)) {
+        return
+      }
       document.cookie = this.cookieCreator(_key, _value, expires)
     })
   }
