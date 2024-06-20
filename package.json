@@ -1,6 +1,6 @@
 {
   "name": "yuumi-storage",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "web storage",
   "main": "dist/index.cjs.js",
   "browser": "dist/index.umd.js",
