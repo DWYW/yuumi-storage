@@ -1,15 +1,14 @@
 import { _YuumiBaseStorage, _YuumiBaseStorageOption } from "./base"
 
-export interface YuumiMiniProgramStorageOption extends _YuumiBaseStorageOption {}
+export interface YuumiMiniProgramStorageOption extends _YuumiBaseStorageOption {
+  global: any
+}
 
 export class YuumiMiniProgramStorage extends _YuumiBaseStorage {
   private global: any
   constructor(option?: YuumiMiniProgramStorageOption) {
     super(option)
-     // @ts-ignore
-     if (wx) { this.global = wx }
-     // @ts-ignore
-     else if (my) { this.global = my }
+    this.global = option?.global
   }
 
   /**
